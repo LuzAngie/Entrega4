@@ -191,7 +191,7 @@ function &dvwaPageNewGrab() {
 
 function dvwaThemeGet() {
 	if (isset($_COOKIE['theme'])) {
-		return $_COOKIE[ 'theme' ];
+		return htmlspecialcharms($_COOKIE['theme'], ENT_QUOTES, 'UTF-8');
 	}
 	return 'light';
 }
