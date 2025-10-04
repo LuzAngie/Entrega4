@@ -5,14 +5,18 @@ on:
   pull_request:
     branches: [ "main" ]
 
+<<<<<<< Updated upstream
 permissions:
   contents: read
   security-events: write
 
+=======
+>>>>>>> Stashed changes
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< Updated upstream
       - uses: actions/checkout@v3
       
       # La acción oficial automáticamente sincroniza con el dashboard
@@ -30,3 +34,34 @@ jobs:
         if: always()
         with:
           sarif_file: snyk-code.sarif
+=======
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install Snyk
+        run: npm install -g snyk
+      - name: Verificar archivos del directorio
+        run: ls -la
+
+      # Usar Snyk Code para analizar el código fuente (no dependencias)
+      - name: Run Snyk Code to check for vulnerabilities
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk code test --severity-threshold=high
+        continue-on-error: true
+      # Opcional: Analizar contenedores Docker si los usas
+      - name: Run Snyk to check Docker
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          if [ -f "Dockerfile" ]; then
+            snyk container test $(docker build -q .)
+          fi
+        continue-on-error: true
+        - name: Monitor project in Snyk Dashboard
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk monitor
+>>>>>>> Stashed changes
