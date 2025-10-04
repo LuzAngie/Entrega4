@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # La acción oficial automáticamente sincroniza con el dashboard
+      # La acción oficial automáticamente sincroniza con el dashboard se cambia runt por command con token
       - name: Run Snyk Security Scan
         uses: snyk/actions@master
         continue-on-error: true
