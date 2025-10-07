@@ -1,37 +1,28 @@
 <?php
 
-if( isset( $_POST[ 'Submit' ]  ) ) {
-	// Get input
-	$target = trim($_REQUEST[ 'ip' ]);
+if (isset($_POST['Submit'])) {
+    // Obtener entrada y limpiarla
+    $target = trim($_POST['ip']);
 
-	// Set blacklist
-	$substitutions = array(
-		'||' => '',
-		'&'  => '',
-		';'  => '',
-		'| ' => '',
-		'-'  => '',
-		'$'  => '',
-		'('  => '',
-		')'  => '',
-		'`'  => '',
-	);
+    // Validar que la entrada sea una dirección IP válida
+    if (filter_var($target, FILTER_VALIDATE_IP)) {
 
-	// Remove any of the characters in the array (blacklist).
-	$target = str_replace( array_keys( $substitutions ), $substitutions, $target );
+        // Determinar el sistema operativo
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            // Windows
+            $cmd = escapeshellcmd("ping -n 4 " . escapeshellarg($target));
+        } else {
+            // Unix/Linux
+            $cmd = escapeshellcmd("ping -c 4 " . escapeshellarg($target));
+        }
 
-	// Determine OS and execute the ping command.
-	if( stristr( php_uname( 's' ), 'Windows NT' ) ) {
-		// Windows
-		$cmd = shell_exec( 'ping  ' . $target );
-	}
-	else {
-		// *nix
-		$cmd = shell_exec( 'ping  -c 4 ' . $target );
-	}
+        // Ejecutar comando de forma segura
+        $output = shell_exec($cmd);
 
-	// Feedback for the end user
-	$html .= "<pre>{$cmd}</pre>";
+        // Mostrar salida al usuario
+        echo "<pre>" . htmlspecialchars($output, ENT_QUOTES, 'UTF-8') . "</pre>";
+    } else {
+        echo "<pre>Dirección IP inválida.</pre>";
+    }
 }
-
 ?>
